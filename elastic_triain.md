@@ -105,6 +105,8 @@ pytorchjob
 1. 先创建出所有job的min 个worker 后，再为job 创建弹性worker。
 2. 如果有新job提交，但没有富余资源时，应优先杀死弹性worker以腾出资源。
 
+此外，训练任务多个worker 有角色之分：一个master（或rank=0的worker） 和多个worker，master应确保“优先创建，靠后删除”，让master 优先级大于worker 可以实现这个效果，volcano之前从Pod.Priority来获取任务优先级，这需要operator层面维护PriorityClass，不太方便，因此提供了一个pr 让volcano 可以从Pod Annotation中获取pod 优先级。 
+
 后续volcano 还可以支持配置“冷却时间”，因为训练job重启一次代价不小，所以一个job 的worker数量应尽量避免经常变动，在一次扩缩动作后，冷却一段时间再进行下一次扩缩。
 
 ## 小结
